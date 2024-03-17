@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <button type="button" onclick="rolDobbelSteen()">Rol de dobbelsteen</button><br>
+
+    <div id="weergeefDobbelSteen"></div><br>
+
+    <label for="éénKnop" id="éénKnopScore">Is het een optie?</label><br>
+    <input type="radio" id="éénKnop" name="knop" disabled><br>
+
+
+    <button type="submit" onclick="telScoreOp()">Score selecteren</button><br>
+
+    <div id="weergeefTotaleScore"></div>
+
+
+
+    <script>
+        let dobbelSteenArray = [];
+        let huidigeRonde = 1;
+        let overigeWorpen = 3;
+        let totaleScore = 0;
+
+        let weergeefDobbelSteen = document.getElementById('weergeefDobbelSteen');
+
+        let éénKnopScore = document.getElementById('éénKnopScore');
+        let éénKnop = document.getElementById("éénKnop");
+
+
+        let weergeefTotaleScore = document.getElementById('weergeefTotaleScore');
+        
+
+
+        function rolDobbelSteen() {
+            dobbelSteenArray.length = 0;
+            // Leere das Array zu Beginn, wenn du das nicht machts kannst du nur einmal einen Wert extrahieren.
+            for (let i = 0; i < 5; i++) {
+                const dobbelSteenGetal = Math.floor(Math.random() * 6) + 1;
+                dobbelSteenArray.push(dobbelSteenGetal);
+            }
+            // Extrahiere die ersten 5 Elemente des Arrays, wenn verfügbar, oder das gesamte Array
+            weergeefDobbelSteen.innerText = dobbelSteenArray.slice(0, 5);
+            // Geht von 0 (array wert) bis 5 (.length herausgabe)
+            /* 
+              Einen fehler den ich erst gemacht habe, war versuchen um die 
+              Würfel Werte gleich aus der 'würfelArray' zu holen, jetzt ist
+              es so das er nur 5 zur einer Zeit wiedergebt mit der .slice methode.
+            */
+
+            // Hier rüfe ich alle funktionen auf, jedes mal das mann fertig ist mit dem Rollen, soll er ansehen ob du qualifizierst's für einen dieser optionen.
+            telÉénenOp();
+            
+            // Ich habe das gefühl das ich irgendwo 'return' verwenden muss, aber es funktioniert so eigentlich auch. 
+        }
+
+        let éénOgen = 0; 
+        function telÉénenOp() {
+            éénOgen = 0;
+            // Hier mit ↑ kann ich den bug ausweichen, mann muss die zahle einfach auf 0 setzten.
+            if (dobbelSteenArray.includes(1)) {
+                éénKnopScore.innerText = 'Één is een optie.';
+                éénKnop.disabled = false;
+
+                for (let i = 0; i < dobbelSteenArray.length; i++) {
+                    if (dobbelSteenArray[i] == 1) {
+                        éénOgen++;
+                    }
+                }
+            } else {
+                éénKnopScore.innerText = 'Één geeft je geen punten...';
+                éénKnop.disabled = true;
+            }
+        }
+
+        let test = false;
+
+        function telScoreOp() {
+            if (éénKnop.checked && test == false) {
+                totaleScore += éénOgen * 1;
+                test = true;
+                éénKnop.checked = false;
+                
+                //éénKnop.disabled = true;
+                // Das ist was ich ehrstmals gesagt habe, aber wenn mann neu rollt wird telÉénenOp() wieder neu ausgeführt. 
+            }
+            weergeefTotaleScore.innerText = `Dit is je score: ${totaleScore}`;
+        }
+
+        /*
+        -1 array op het scherm, waar je steeds de waardes uit kan halen. ○
+        -Wanneer 1 een optie is, moet de radio knop 'enabled (toegestaan)' zijn. ○
+        -Wanneer 1 een keer geselecteerd is, mag die 'nooit meer (dramatisch hoor)' toegestaan zijn. ○
+          -1 niet in de array zit, word de dobbelsteen gedeselecteerd. ○
+        -De score moet opgeteld worden bij de totale score. ○
+        -6 rondes.  
+        */
+
+        // Einen bug der auftretet ist das er die ganze länge von dobbelSteenArray.length zu sich nimmt, und dabei auch noch die vorherigen Werten dabei packt.
+    </script>
+
+</body>
+
+</html>
