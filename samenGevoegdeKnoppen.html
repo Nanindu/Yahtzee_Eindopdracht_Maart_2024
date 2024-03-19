@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yahtzee!!</title>
+    <style>
+        body,
+        html {
+            background-color: black;
+            font-size: large;       
+            color: green;
+            /* display: flex;
+            flex-wrap: nowrap; */
+            /* padding: 3rem; */
+        }
+
+        .scoreKnoppen {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto;
+            padding: 10px;
+        }
+
+        .grid-item {
+            border: 1px solid green;
+            padding: 20px;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        input[type='radio'] { 
+            transform: scale(2); 
+        }
+    </style>
+</head>
+
+<body>
+<div class="scoreKnoppen">
+  <div class="grid-item">  
+    <button type="button" onclick="rolDobbelSteen()">Rol de dobbelsteen</button><br>
+    <div id="weergeefDobbelSteen"></div><br>
+  </div>
+
+
+  <div class="grid-item">
+    <label for="éénKnop" id="éénKnopScore">Is één een optie?</label>
+    <br>
+    <input type="radio" id="éénKnop" name="knop" disabled>
+    <br><br>
+  </div>
+  
+  <div class="grid-item">
+    <label for="tweeKnop" id="tweeKnopScore">Is twee een optie?</label>
+    <br>
+    <input type="radio" id="tweeKnop" name="knop" disabled>
+    <br><br>
+  </div>  
+
+  <div class="grid-item">
+    <label for="drieKnop" id="drieKnopScore">Is drie een optie?</label>
+    <br>
+    <input type="radio" id="drieKnop" name="knop" disabled>
+    <br><br>
+  </div>  
+
+  <div class="grid-item">
+    <label for="vierKnop" id="vierKnopScore">Is vier een optie?</label>
+    <br>
+    <input type="radio" id="vierKnop" name="knop" disabled>
+    <br><br>
+  </div>
+
+  <div class="grid-item">
+    <label for="vijfKnop" id="vijfKnopScore">Is vijf een optie?</label>
+    <br>
+    <input type="radio" id="vijfKnop" name="knop" disabled>
+    <br><br>
+  </div>
+
+  <div class="grid-item">
+    <label for="zesKnop" id="zesKnopScore">Is zes een optie?</label>
+    <br>
+    <input type="radio" id="zesKnop" name="knop" disabled>
+    <br><br>
+  </div>
+
+  <div class="grid-item">
+    <label for="drieDezelfdeKnop" id="drieDezelfdeKnopScore">Is drieDezelfde een optie?</label>
+    <br>
+    <input type="radio" id="drieDezelfdeKnop" name="knop" disabled>
+    <br><br>
+  </div>
+
+  <div class="grid-item">
+    <label for="vierDezelfdeKnop" id="vierDezelfdeKnopScore">Is vierDezelfde een optie?</label>
+    <br>
+    <input type="radio" id="vierDezelfdeKnop" name="knop" disabled>
+    <br><br>
+  </div>
+
+  <div class="grid-item">
+    <label for="fullhouseKnop" id="fullhouseKnopScore">Is fullhouse een optie?</label>
+    <br>
+    <input type="radio" id="fullhouseKnop" name="knop" disabled>
+    <br><br>
+  </div>
+
+  <div class="grid-item">
+    <label for="kleineStraatKnop" id="kleineStraatKnopScore">Is kleineStraat een optie?</label>
+    <br>
+    <input type="radio" id="kleineStraatKnop" name="knop" disabled>
+    <br><br>
+  </div>
+
+  <div class="grid-item">
+    <label for="groteStraatKnop" id="groteStraatKnopScore">Is groteStraat een optie?</label>
+    <br>
+    <input type="radio" id="groteStraatKnop" name="knop" disabled>
+    <br><br>
+  </div>
+
+  <div class="grid-item">
+    <label for="yahtzeeKnop" id="yahtzeeKnopScore">Is yahtzee een optie?</label>
+    <br>
+    <input type="radio" id="yahtzeeKnop" name="knop" disabled>
+    <br><br>
+  </div>
+
+  <div class="grid-item">
+    <label for="kansKnop" id="kansKnopScore">Is kans een optie?</label>
+    <br>
+    <input type="radio" id="kansKnop" name="knop" disabled>
+    <br><br>
+  </div>  
+
+  
+  <div class="grid-item">
+    <button id="indienKnop" type="submit" onclick="telScoreOp()">Score selecteren</button><br>
+    <div id="weergeefTotaleScore"></div>
+  </div>  
+</div>
+
+    <script>
+        let dobbelSteenArray = [];
+        let overigeRondes = 6;
+        let overigeWorpen = 3;
+        let totaleScore = 0;
+
+        let weergeefDobbelSteen = document.getElementById('weergeefDobbelSteen');
+
+        let éénKnopScore = document.getElementById('éénKnopScore');
+        let éénKnop = document.getElementById("éénKnop");
+
+
+        // Rest der variation hinzufügen, kann wahrscheinlich kompakter gemacht werden...
+        let tweeKnopScore = document.getElementById('tweeKnopScore');
+        let tweeKnop = document.getElementById("tweeKnop");
+
+        let drieKnopScore = document.getElementById('drieKnopScore');
+        let drieKnop = document.getElementById("drieKnop");
+
+        let vierKnopScore = document.getElementById('vierKnopScore');
+        let vierKnop = document.getElementById("vierKnop");
+
+        let vijfKnopScore = document.getElementById('vijfKnopScore');
+        let vijfKnop = document.getElementById("vijfKnop");
+
+        let zesKnopScore = document.getElementById('zesKnopScore');
+        let zesKnop = document.getElementById("zesKnop");
+
+        // Irreguläre
+
+        let drieDezelfdeKnopScore = document.getElementById('drieDezelfdeKnopScore');
+        let drieDezelfdeKnop = document.getElementById("drieDezelfdeKnop");
+
+        let vierDezelfdeKnopScore = document.getElementById('vierDezelfdeKnopScore');
+        let vierDezelfdeKnop = document.getElementById("vierDezelfdeKnop");
+
+        let fullhouseKnopScore = document.getElementById('fullhouseKnopScore');
+        let fullhouseKnop = document.getElementById("fullhouseKnop");
+
+        let kleineStraatKnopScore = document.getElementById('kleineStraatKnopScore');
+        let kleineStraatKnop = document.getElementById("kleineStraatKnop");
+
+        let groteStraatKnopScore = document.getElementById('groteStraatKnopScore');
+        let groteStraatKnop = document.getElementById("groteStraatKnop");
+
+        let yahtzeeKnopScore = document.getElementById('yahtzeeKnopScore');
+        let yahtzeeKnop = document.getElementById("yahtzeeKnop");
+
+        let kansKnopScore = document.getElementById('kansKnopScore');
+        let kansKnop = document.getElementById("kansKnop");
+
+        let weergeefTotaleScore = document.getElementById('weergeefTotaleScore');
+
+
+
+        function rolDobbelSteen() {
+            dobbelSteenArray.length = 0;
+            // Leere das Array zu Beginn, wenn du das nicht machts kannst du nur einmal einen Wert extrahieren.
+            for (let i = 0; i < 5; i++) {
+                const dobbelSteenGetal = Math.floor(Math.random() * 6) + 1;
+                dobbelSteenArray.push(dobbelSteenGetal);
+            }
+            // Extrahiere die ersten 5 Elemente des Arrays, wenn verfügbar, oder das gesamte Array
+            weergeefDobbelSteen.innerText = dobbelSteenArray.slice(0, 5);
+            // Geht von 0 (array wert) bis 5 (.length herausgabe)
+            /* 
+              Einen fehler den ich erst gemacht habe, war versuchen um die 
+              Würfel Werte gleich aus der 'würfelArray' zu holen, jetzt ist
+              es so das er nur 5 zur einer Zeit wiedergebt mit der .slice methode.
+            */
+
+            // Hier rüfe ich alle funktionen auf, jedes mal das mann fertig ist mit dem Rollen, soll er ansehen ob du qualifizierst's für einen dieser optionen.
+            overigeWorpen--;
+            //testKans = false;
+            rondes();
+
+            telÉénenOp();
+            telTweeënOp();
+            telDrieënOp();
+            telVierenOp();
+            telVijfenOp();
+            telZessenOp();
+
+            drieDezelfde(dobbelSteenArray);
+            vierDezelfde(dobbelSteenArray);
+            fullhouse(dobbelSteenArray);
+
+            kleineStraat(dobbelSteenArray);
+            groteStraat(dobbelSteenArray);
+
+            yahtzee(dobbelSteenArray);
+            kans(dobbelSteenArray);
+
+            vervangMetPlaatjes();
+
+            // Ich habe das gefühl das ich irgendwo 'return' verwenden muss, aber es funktioniert so eigentlich auch. 
+        }
+
+        // Noch nicht vorhanden.
+        function vervangMetPlaatjes() {
+          const dobbelPlaatjes = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+          //  Funktion womit ich die Nummerische Werte zur Abbildungen von Würfel Enden kann, ohne das die Werte sich ändern. 
+        }    
+
+        let éénOgen = 0;
+        function telÉénenOp() {
+            éénOgen = 0;
+            // Hier mit ↑ kann ich den bug ausweichen, mann muss die zahle einfach auf 0 setzten.
+            if (dobbelSteenArray.includes(1) && testÉén == false) {
+                éénKnopScore.innerText = 'Één is een optie.';
+                éénKnop.disabled = false;
+
+                for (let i = 0; i < dobbelSteenArray.length; i++) {
+                    if (dobbelSteenArray[i] == 1) {
+                        éénOgen++;
+                    }
+                }
+            } else {
+                éénKnopScore.innerText = 'Één geeft je geen punten...';
+                éénKnop.disabled = true;
+            }
+        }
+
+        let tweeOgen = 0;
+        function telTweeënOp() {
+            tweeOgen = 0;
+            if (dobbelSteenArray.includes(2) && testTwee == false) {
+                tweeKnopScore.innerText = 'Twee is een optie.';
+                tweeKnop.disabled = false;
+
+                for (let i = 0; i < dobbelSteenArray.length; i++) {
+                    if (dobbelSteenArray[i] == 2) {
+                        tweeOgen++;
+                    }
+                }
+            } else {
+                tweeKnopScore.innerText = 'Twee geeft je geen punten...';
+                tweeKnop.disabled = true;
+            }
+        }
+
+        // gegenereerd
+
+        let drieOgen = 0;
+
+        function telDrieënOp() {
+            drieOgen = 0;
+            if (dobbelSteenArray.includes(3) && testDrie == false) {
+                drieKnopScore.innerText = 'Drie is een optie.';
+                drieKnop.disabled = false;
+
+                for (let i = 0; i < dobbelSteenArray.length; i++) {
+                    if (dobbelSteenArray[i] == 3) {
+                        drieOgen++;
+                    }
+                }
+            } else {
+                drieKnopScore.innerText = 'Drie geeft je geen punten...';
+                drieKnop.disabled = true;
+            }
+        }
+
+        let vierOgen = 0;
+        function telVierenOp() {
+            vierOgen = 0;
+            if (dobbelSteenArray.includes(4) && testVier == false) {
+                vierKnopScore.innerText = 'Vier is een optie.';
+                vierKnop.disabled = false;
+
+                for (let i = 0; i < dobbelSteenArray.length; i++) {
+                    if (dobbelSteenArray[i] == 4) {
+                        vierOgen++;
+                    }
+                }
+            } else {
+                vierKnopScore.innerText = 'Vier geeft je geen punten...';
+                vierKnop.disabled = true;
+            }
+        }
+
+
+        let vijfOgen = 0;
+        function telVijfenOp() {
+            vijfOgen = 0;
+            if (dobbelSteenArray.includes(5) && testVijf == false) {
+                vijfKnopScore.innerText = 'Vijf is een optie.';
+                vijfKnop.disabled = false;
+
+                for (let i = 0; i < dobbelSteenArray.length; i++) {
+                    if (dobbelSteenArray[i] == 5) {
+                        vijfOgen++;
+                    }
+                }
+            } else {
+                vijfKnopScore.innerText = 'Vijf geeft je geen punten...';
+                vijfKnop.disabled = true;
+            }
+        }
+
+
+        let zesOgen = 0;
+        function telZessenOp() {
+            zesOgen = 0;
+            if (dobbelSteenArray.includes(6) && testZes == false) {
+                zesKnopScore.innerText = 'Zes is een optie.';
+                zesKnop.disabled = false;
+
+                for (let i = 0; i < dobbelSteenArray.length; i++) {
+                    if (dobbelSteenArray[i] == 6) {
+                        zesOgen++;
+                    }
+                }
+            } else {
+                zesKnopScore.innerText = 'Zes geeft je geen punten...';
+                zesKnop.disabled = true;
+            }
+        }
+
+        function drieDezelfde(dobbel) {
+            const aantalStenen = {};
+            // Ein Objekt zur Zählung der Würfelwerte
+
+            // Zähle die Häufigkeit jedes Würfelwerts
+            for (let i = 0; i < dobbel.length; i++) {
+                const nummer = dobbel[i];
+                if (aantalStenen[nummer]) {
+                    aantalStenen[nummer]++;
+                } else {
+                    aantalStenen[nummer] = 1;
+                }
+            }
+            // Versuche hier ein zu sehen wie viele Steine es gibt
+            // Überprüfe, ob ein Würfelwert dreimal vorkommt
+            for (const nummer in aantalStenen) {
+                if (aantalStenen[nummer] >= 3 && testDrieDezelfde == false) {
+                    drieDezelfdeKnopScore.innerText = 'DrieDezelfde is een optie.';
+                    drieDezelfdeKnop.disabled = false;
+                    return;
+                } else {
+                    drieDezelfdeKnopScore.innerText = 'DrieDezelfde is geen optie.';
+                    drieDezelfdeKnop.disabled = true;
+                    // Wenn kein Wert dreimal vorkommt
+                }
+            }
+        }
+
+
+        function vierDezelfde(dobbel) {
+            const aantalStenen = {};
+
+            for (let i = 0; i < dobbel.length; i++) {
+                const nummer = dobbel[i];
+                if (aantalStenen[nummer]) {
+                    aantalStenen[nummer]++;
+                } else {
+                    aantalStenen[nummer] = 1;
+                }
+            }
+
+            for (const nummer in aantalStenen) {
+                if (aantalStenen[nummer] >= 4 && testVierDezelfde == false) {
+                    vierDezelfdeKnopScore.innerText = 'VierDezelfde is een optie.';
+                    vierDezelfdeKnop.disabled = false;
+                    return;
+                } else {
+                    vierDezelfdeKnopScore.innerText = 'VierDezelfde is geen optie.';
+                    vierDezelfdeKnop.disabled = true;
+                }
+            }
+        }
+
+
+        function fullhouse(dobbel) {
+            const aantalStenen = {}; // Ein Objekt zur Zählung der Würfelwerte
+            // Zähle die Häufigkeit jedes Würfelwerts
+            for (let i = 0; i < dobbel.length; i++) {
+                const nummer = dobbel[i];
+                if (aantalStenen[nummer]) {
+                    aantalStenen[nummer]++;
+                } else {
+                    aantalStenen[nummer] = 1;
+                }
+            }
+
+            let drieGevonden = false;
+            let tweeGevonden = false;
+
+            // Überprüfe, ob drei Würfel denselben Wert haben
+            // und ob zwei Würfel denselben Wert haben
+            for (const nummer in aantalStenen) {
+                if (aantalStenen[nummer] === 3) {
+                    drieGevonden = true;
+                } else if (aantalStenen[nummer] === 2) {
+                    tweeGevonden = true;
+                }
+            }
+            // Wenn sowohl drei als auch zwei Würfel gefunden wurden, ist es ein Full House
+            if (drieGevonden && tweeGevonden && testFullHouse == false) {
+                fullhouseKnopScore.innerText = 'Fullhouse is een optie.';
+                fullhouseKnop.disabled = false;
+                return;
+            } else {
+                fullhouseKnopScore.innerText = 'Fullhouse is geen optie.';
+                fullhouseKnop.disabled = true;
+            }
+        }
+
+
+        function kleineStraat(dobbel) {
+            // Zuerst sortieren wir das Array, um sicherzustellen, dass die Zahlen in aufsteigender Reihenfolge stehen
+            dobbel.sort((a, b) => a - b);
+
+            // Wir überprüfen, ob es vier aufeinanderfolgende Zahlen gibt
+            for (let i = 0; i <= dobbel.length - 4; i++) {
+                // Überprüfen, ob die nächste Zahl eins größer als die aktuelle Zahl ist
+                if (dobbel[i] + 1 === dobbel[i + 1] &&
+                    dobbel[i] + 2 === dobbel[i + 2] &&
+                    dobbel[i] + 3 === dobbel[i + 3] && testKleineStraat == false) {
+
+                    kleineStraatKnopScore.innerText = 'KleineStraat is een optie.';
+                    kleineStraatKnop.disabled = false;
+                    return;
+
+                    // Wenn ja, geben wir true zurück
+                }
+                // Wenn du keinen '===' hinzufügst, und denn dobbel[i + 1] weck lässt's, wird der Code immer auf true gesetzt
+            }
+            kleineStraatKnopScore.innerText = 'KleineStraat is geen optie.';
+            kleineStraatKnop.disabled = true;
+
+            // Wenn wir hier ankommen, haben wir keine vier aufeinanderfolgenden Zahlen gefunden  
+        }
+
+        function groteStraat(dobbel) {
+            dobbel.sort((a, b) => a - b);
+
+            for (let i = 0; i <= dobbel.length - 5; i++) {
+                if (dobbel[i] + 1 === dobbel[i + 1] &&
+                    dobbel[i] + 2 === dobbel[i + 2] &&
+                    dobbel[i] + 3 === dobbel[i + 3] &&
+                    dobbel[i] + 4 === dobbel[i + 4] && testGroteStraat == false) {
+
+                    groteStraatKnopScore.innerText = 'GroteStraat is een optie.';
+                    groteStraatKnop.disabled = false;
+                    return;
+                }
+            }
+            groteStraatKnopScore.innerText = 'GroteStraat is geen optie.';
+            groteStraatKnop.disabled = true;
+        }
+
+        function yahtzee(dobbel) {
+            const aantalStenen = {};
+
+            for (let i = 0; i < dobbel.length; i++) {
+                const nummer = dobbel[i];
+                if (aantalStenen[nummer]) {
+                    aantalStenen[nummer]++;
+                } else {
+                    aantalStenen[nummer] = 1;
+                }
+            }
+
+            for (const nummer in aantalStenen) {
+                if (aantalStenen[nummer] >= 5) {
+                    yahtzeeKnopScore.innerText = 'Yahtzee is een optie.';
+                    yahtzeeKnop.disabled = false;
+                    return;
+                }
+            }
+            yahtzeeKnopScore.innerText = 'Yahtzee is geen optie.';
+            yahtzeeKnop.disabled = true;
+        }
+
+        let allesOptellenKans = 0;
+        function kans() {
+            allesOptellenKans = 0;
+            for (let i = 0; i < dobbelSteenArray.length; i++) {
+                allesOptellenKans += dobbelSteenArray[i];
+            }
+            kansKnopScore.innerText = 'Kans is een optie.';
+            kansKnop.disabled = false;
+              if (testKans == true) {
+                kansKnop.disabled = true;
+              }
+        }
+
+
+        let testÉén = false;
+        let testTwee = false;
+        let testDrie = false;
+        let testVier = false;
+        let testVijf = false;
+        let testZes = false;
+
+        let testDrieDezelfde = false;
+        let testVierDezelfde = false;
+
+        let testFullHouse = false;
+        let testKleineStraat = false;
+        let testGroteStraat = false;
+
+
+        let testYahtzee = false;
+        let testKans = false;
+
+        function telScoreOp() {
+            if (éénKnop.checked && testÉén == false) {
+                totaleScore += éénOgen * 1;
+                testÉén = true;
+                éénKnop.checked = false;
+                // if (testÉén == true) {
+                //   éénKnopScore.innerText = 'Één geeft je geen punten...';  
+                // }
+                //éénKnop.disabled = true;
+                // Das ist was ich ehrstmals gesagt habe, aber wenn mann neu rollt wird telÉénenOp() wieder neu ausgeführt. 
+            } else if (tweeKnop.checked && testTwee == false) {
+                totaleScore += tweeOgen * 2;
+                testTwee = true;
+                tweeKnop.checked = false;
+                // gegenereerd
+            } else if (drieKnop.checked && testDrie == false) {
+                totaleScore += drieOgen * 3;
+                testDrie = true;
+                drieKnop.checked = false;
+            } else if (vierKnop.checked && testVier == false) {
+                totaleScore += vierOgen * 4;
+                testVier = true;
+                vierKnop.checked = false;
+            } else if (vijfKnop.checked && testVijf == false) {
+                totaleScore += vijfOgen * 5;
+                testVijf = true;
+                vijfKnop.checked = false;
+            } else if (zesKnop.checked && testZes == false) {
+                totaleScore += zesOgen * 6;
+                testZes = true;
+                zesKnop.checked = false;
+            } else if (drieDezelfdeKnop.checked && testDrieDezelfde == false) {
+                totaleScore += 15;
+                testDrieDezelfde = true;
+                drieDezelfdeKnop.checked = false;
+            } else if (vierDezelfdeKnop.checked && testVierDezelfde == false) {
+                totaleScore += 20;
+                testVierDezelfde = true;
+                vierDezelfdeKnop.checked = false;
+            } else if (fullhouseKnop.checked && testFullHouse == false) {
+                totaleScore += 25;
+                testFullHouse = true;
+                fullhouseKnop.checked = false;
+            } else if (kansKnop.checked && testKans == false) {
+                totaleScore += allesOptellenKans;
+                testKans = true;
+                kansKnop.checked = false;
+                kansKnop.disabled = true;
+            } else if (kleineStraatKnop.checked && testKleineStraat == false) {
+                totaleScore += 30;
+                testKleineStraat = true;
+                kleineStraatKnop.checked = false;
+            } else if (groteStraatKnop.checked && testGroteStraat == false) {
+                totaleScore += 40;
+                testGroteStraat = true;
+                groteStraatKnop.checked = false;
+            } else if (yahtzeeKnop.checked && testYahtzee == false) {
+                totaleScore += 50;
+                testYahtzee = true;
+                yahtzeeKnop.checked = false;
+            }
+            weergeefTotaleScore.innerText = `Dit is je score: ${totaleScore}`;
+        }
+
+
+        // // Irreguläre Funktionen.
+
+        // function drieDezelfde(dobbel) {
+        //     const aantalStenen = {}; // Ein Objekt zur Zählung der Würfelwerte
+
+        //     // Zähle die Häufigkeit jedes Würfelwerts
+        //     for (let i = 0; i < dobbel.length; i++) {
+        //         const nummer = dobbel[i];
+        //         if (aantalStenen[nummer]) {
+        //             aantalStenen[nummer]++;
+        //         } else {
+        //             aantalStenen[nummer] = 1;
+        //         }
+        //     }
+        //     // Versuche hier ein zu sehen wie viele Steine es gibt
+        //     // Überprüfe, ob ein Würfelwert dreimal vorkommt
+        //     for (const nummer in aantalStenen) {
+        //         if (aantalStenen[nummer] >= 3) {
+        //             drieDezelfdeKnopScore.innerText = 'DrieDezelfde is een optie.';
+        //             drieDezelfdeKnop.disabled = false;
+        //         }
+        //     }
+        //     drieDezelfdeKnopScore.innerText = 'DrieDezelfde is geen optie.';
+        //     drieDezelfdeKnop.disabled = true;
+        //     // Wenn kein Wert dreimal vorkommt
+        // }
+
+        // function vierDezelfde(dobbel) {
+        //     const aantalStenen = {};
+
+        //     for (let i = 0; i < dobbel.length; i++) {
+        //         const nummer = dobbel[i];
+        //         if (aantalStenen[nummer]) {
+        //             aantalStenen[nummer]++;
+        //         } else {
+        //             aantalStenen[nummer] = 1;
+        //         }
+        //     }
+
+        //     for (const nummer in aantalStenen) {
+        //         if (aantalStenen[nummer] >= 4) {
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // }
+
+        // testArr = [1, 1, 1, 2, 2];
+
+        // console.log(drieDezelfde(testArr));
+
+        let indienKnop = document.getElementById('indienKnop');
+
+        function rondes() {
+            if (overigeWorpen == 0) {
+                alert('Ronde is voorbij.');
+                overigeWorpen = 3;
+                overigeRondes--;
+                if (overigeRondes == 0) {
+                    alert('Spel is afgelopen!!');
+                    bonusPunten();
+                    indienKnop.disabled = true;
+                }
+            }
+        }
+
+        function bonusPunten() {
+            if (totaleScore >= 189) {
+                alert('Je krijgt er nog een bonus van 35 punten bij!');
+                totaleScore += 35;
+                weergeefTotaleScore.innerText += ' + 35 BONUS';
+            }
+        }
+
+
+
+        /*
+        -1 array op het scherm, waar je steeds de waardes uit kan halen. ○
+        -Wanneer 1 een optie is, moet de radio knop 'enabled (toegestaan)' zijn. ○
+        -Wanneer 1 een keer geselecteerd is, mag die 'nooit meer (dramatisch hoor)' toegestaan zijn. ○
+          -1 niet in de array zit, word de dobbelsteen gedeselecteerd. ○
+        -De score moet opgeteld worden bij de totale score. ○
+        -Andere zahlen hinzufügen
+        -6 rondes.
+        
+        -CSS toevoegen, eisen formulier bekijken.  ○
+          - Aantal overige worpen op t'scherm
+          - Aantal Rondes
+          - Gebruikers verhaal, en terugslag.
+          - Wanneer je iets gekozen hebt, is het eigenlijk de bedoeling dat je naar de volgende ronde gaat. 
+        */
+
+        // Einen bug der auftretet ist das er die ganze länge von dobbelSteenArray.length zu sich nimmt, und dabei auch noch die vorherigen Werten dabei packt.
+    </script>
+</body>
+</html>
